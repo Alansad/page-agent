@@ -10,34 +10,25 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 // Load .env from repo root
 dotenvConfig({ path: resolve(__dirname, '../../.env'), quiet: true })
 
-// UMD Bundle for CDN
-// - alias all local packages so that they can be build in
-// - no external
-// - no d.ts. dts does not work with monorepo aliasing
+// IIFE Bundle for production usage:
+// - bundles all local packages so it can be used via <script> tag
+// - mounts `PageAgent` to `window.PageAgent`
+// - does NOT auto-initialize an agent instance
 export default defineConfig(() => ({
-	plugins: [
-		cssInjectedByJsPlugin({ relativeCSSInjection: true }),
-		// analyzer()
-	],
+	plugins: [cssInjectedByJsPlugin({ relativeCSSInjection: true })],
 	publicDir: false,
 	build: {
-		// Keep outputs from other iife builds (e.g. page-agent.js) in the same folder.
+		// Keep outputs from other iife builds (e.g. page-agent.demo.js) in the same folder.
 		// Repo root `npm run cleanup` is responsible for cleaning dist outputs.
 		emptyOutDir: false,
 		lib: {
-			entry: resolve(__dirname, 'src/demo.ts'),
+			entry: resolve(__dirname, 'src/iife.ts'),
 			name: 'PageAgent',
-			fileName: () => `page-agent.demo.js`,
+			fileName: () => 'page-agent.js',
 			formats: ['iife'],
 		},
 		outDir: resolve(__dirname, 'dist', 'iife'),
-		cssCodeSplit: true,
-		// minify: false,
 		rollupOptions: {
-			// output: {
-			// 	// force use .js as extension
-			// 	entryFileNames: 'page-agent.js',
-			// },
 			onwarn: function (message, handler) {
 				if (message.code === 'EVAL') return
 				handler(message)

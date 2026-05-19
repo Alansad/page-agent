@@ -55,6 +55,30 @@ Fastest way to try PageAgent with our free Demo LLM:
 
 Add `?autoInit=false` to load the script without creating the demo agent automatically. You can then instantiate it with `new window.PageAgent(...)`.
 
+### Production script (single file)
+
+Build a production-ready IIFE bundle (no auto-init):
+
+```bash
+npm run build:iife
+```
+
+It generates `packages/page-agent/dist/iife/page-agent.js`, which mounts `PageAgent` to `window.PageAgent`:
+
+```html
+<script src="dist/iife/page-agent.js" crossorigin="true"></script>
+<script>
+	const agent = new window.PageAgent({
+		model: 'qwen3.5-plus',
+		baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+		apiKey: 'YOUR_API_KEY',
+		language: 'en-US',
+	})
+
+	agent.execute('Click the login button')
+</script>
+```
+
 ### NPM Installation
 
 ```bash
